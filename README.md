@@ -7,6 +7,11 @@ makes everyone's lives easier! Just run script and all your sales are recorded o
 - Python 3
 - Requests module
 
+# Common errors
+
+"Key error" 
+ Either you didn't put in your credentials in the script or you were sending too many requests to StockX within a short period of time (This is usually the case). Try again with a different IP or wait a couple of minutes.
+
 # Notes
 - Make sure you've installed everything you've needed to install; refer to the requirements. 
  
