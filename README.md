@@ -3,6 +3,8 @@ Scrapes StockX and outputs the user's sale history into a CSV file. Very useful 
 real project dealing with requests and JSON so my style of code may seem "amateur" but I'm still learning. Hopefully this
 makes everyone's lives easier! Just run script and all your sales are recorded on excel!
 
+NOTE: In your spreadsheet, any red number means you LOST money through that transaction; you got a negative number.
+
 # Requirements
 - Python 3
 - Requests module
