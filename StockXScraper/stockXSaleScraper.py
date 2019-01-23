@@ -5,7 +5,7 @@ def welcome():
 	print('''
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Welcome to stockX sales scraper! 
-Make sure you have your username and password correctly! 
+Make sure you have your username and password in the script! 
 Author: @_sweetcharge on Twitter
 
 NOTE: Your sales will be saved in a file called "StockX_Sales.csv"
@@ -46,18 +46,21 @@ def login():
 	print("Logging in...")
 	time.sleep(3)
 
-	postReq = requests.post(url="https://stockx.com/api/login", headers=header, json=accInfo)
-	# Convert to JSON object
-	siteJSON = postReq.json()
-	# Check to see if the connection was successful
-	status = postReq.status_code
-	# Get the customer ID; will be used for getting sales history
-	customerID = siteJSON['Customer']['id']
-	if(status == 200):
-		print("\nLogged in!")
-		jwt = postReq.headers["jwt-authorization"]
-		# Call the function to scrape sales from the user's account
-		saleHistory(jwt, customerID, pageNumber)
+	if(accInfo["email"] != "" and accInfo["password"] != ""):
+		postReq = requests.post(url="https://stockx.com/api/login", headers=header, json=accInfo)
+		# Convert to JSON object
+		siteJSON = postReq.json()
+		# Check to see if the connection was successful
+		status = postReq.status_code
+		# Get the customer ID; will be used for getting sales history
+		customerID = siteJSON['Customer']['id']
+		if(status == 200):
+			print("\nLogged in!")
+			jwt = postReq.headers["jwt-authorization"]
+			# Call the function to scrape sales from the user's account
+			saleHistory(jwt, customerID, pageNumber)
+	else:
+		print("\nERROR: Please add your account information in the script")
 
 def saleHistory(theJWT, userID, page_num):
 	print("\nGetting sales...")
@@ -105,6 +108,7 @@ def saleHistory(theJWT, userID, page_num):
 			gross_income = (int(soldPrice) - int(buyPrice))
 			profit = (int(soldPriceAfter) - int(buyPrice))
 			totalProfit = (totalProfit + profit)
+
 			# Write each item on it's own separate row
 			with open("StockX_Sales.csv", "a") as csvfile:
 				csv_file = csv.writer(csvfile)
