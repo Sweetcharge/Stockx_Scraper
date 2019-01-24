@@ -1,4 +1,4 @@
-# Stockx_Scraper (sales)
+# Stockx sales scraper
 Scrapes StockX and outputs the user's sale history into a CSV file. Very useful for come tax season. This was my first 
 real project dealing with requests and JSON so my style of code may seem "amateur" but I'm still learning. Hopefully this
 makes everyone's lives easier! Just run script and all your sales are recorded on excel!
