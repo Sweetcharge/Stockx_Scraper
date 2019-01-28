@@ -65,6 +65,7 @@ def login():
 def saleHistory(theJWT, userID, page_num):
 	print("\nGetting sales...")
 	totalProfit = 0.0
+	counter = 1
 
 	header = {
 		'user-agent':			'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36',
@@ -105,14 +106,27 @@ def saleHistory(theJWT, userID, page_num):
 			soldPriceAfter = siteJSON["PortfolioItems"][i]["localTotal"]
 			shoeSize = siteJSON["PortfolioItems"][i]["product"]["shoeSize"]
 			soldDate = siteJSON["PortfolioItems"][i]["matchedWithDate"].split("T")[0]
+
+			# Check if the buying price was listed
+			if(str(buyPrice) == "None"):
+				print("\nERROR: "+productName+" has no buying price; fix this in your excel sheet ["+str(counter)+"/"+str(totalItems)+"]\n")
+				buyPrice = 0
+			else:
+				print("Success! Sale has been logged ["+str(counter)+"/"+str(totalItems)+"]")
+			
+
 			gross_income = (int(soldPrice) - int(buyPrice))
 			profit = (int(soldPriceAfter) - int(buyPrice))
 			totalProfit = (totalProfit + profit)
 
+			
+			time.sleep(0.25)
+			counter = counter+1
+
 			# Write each item on it's own separate row
 			with open("StockX_Sales.csv", "a") as csvfile:
 				csv_file = csv.writer(csvfile)
-				csv_file.writerow([soldDate, productName, shoeSize, "$"+str(buyPrice), "$"+str(soldPrice), "*User input*", "$"+str(soldPriceAfter), "$"+str(gross_income), "$"+str(profit)])
+				csv_file.writerow([soldDate, productName, shoeSize, "NO BUY PRICE LISTED $"+str(buyPrice), "$"+str(soldPrice), "*User input*", "$"+str(soldPriceAfter), "$"+str(gross_income), "$"+str(profit)])
 		
 		page_num = page_num+1
 
