@@ -44,7 +44,7 @@ def login():
 	}
 
 	print("Logging in...")
-	time.sleep(3)
+	time.sleep(1)
 
 	if(accInfo["email"] != "" and accInfo["password"] != ""):
 		postReq = requests.post(url="https://stockx.com/api/login", headers=header, json=accInfo)
@@ -63,7 +63,6 @@ def login():
 		print("\nERROR: Please add your account information in the script")
 
 def saleHistory(theJWT, userID, page_num):
-	print("\nGetting sales...")
 	totalProfit = 0.0
 	counter = 1
 
@@ -92,8 +91,9 @@ def saleHistory(theJWT, userID, page_num):
 				csv_file.writerow(["Date Sold","Product","Size","Cost","Sell Price","Seller Fee","Sell Price After Fees","Gross Income", "Profit"])
 
 	for j in range(page_num, maxPages+1):
+		print("\nGetting sales for page "+str(page_num)+"...")
 		# Sleeps every 2 seconds to avoid bans
-		time.sleep(2)
+		time.sleep(1)
 		url = domain+"/api/customers/"+str(userID)+"/selling/history?sort=matched_with_date&order=DESC&limit=20&page="+str(page_num)
 		getReq = requests.get(url=url, headers=header)
 		siteJSON = getReq.json()
@@ -109,7 +109,8 @@ def saleHistory(theJWT, userID, page_num):
 
 			# Check if the buying price was listed
 			if(str(buyPrice) == "None"):
-				print("\nERROR: "+productName+" has no buying price; fix this in your excel sheet ["+str(counter)+"/"+str(totalItems)+"]\n")
+				print("ERROR: "+productName+" has no buying price; fix this in your excel sheet ["+str(counter)+"/"+str(totalItems)+"]")
+				productName = "[NO BUY PRICE] " + productName
 				buyPrice = 0
 			else:
 				print("Success! Sale has been logged ["+str(counter)+"/"+str(totalItems)+"]")
@@ -118,15 +119,12 @@ def saleHistory(theJWT, userID, page_num):
 			gross_income = (int(soldPrice) - int(buyPrice))
 			profit = (int(soldPriceAfter) - int(buyPrice))
 			totalProfit = (totalProfit + profit)
-
-			
-			time.sleep(0.25)
+			time.sleep(0.2)
 			counter = counter+1
-
 			# Write each item on it's own separate row
 			with open("StockX_Sales.csv", "a") as csvfile:
 				csv_file = csv.writer(csvfile)
-				csv_file.writerow([soldDate, productName, shoeSize, "NO BUY PRICE LISTED $"+str(buyPrice), "$"+str(soldPrice), "*User input*", "$"+str(soldPriceAfter), "$"+str(gross_income), "$"+str(profit)])
+				csv_file.writerow([soldDate, productName, shoeSize, str(buyPrice), "$"+str(soldPrice), "*User input*", "$"+str(soldPriceAfter), "$"+str(gross_income), "$"+str(profit)])
 		
 		page_num = page_num+1
 
@@ -134,9 +132,8 @@ def saleHistory(theJWT, userID, page_num):
 				csv_file = csv.writer(csvfile)
 				csv_file.writerow(["Total profit: ", "$"+str(totalProfit)])
 	csvfile.close()
-	print("\nSuccess!")
-	print('''
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	print("\nAll sales were scraped!")
+	print('''~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Created by: @_sweetcharge
 Check out my reselling profits tracker on Twitter! @theBoominApp
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
